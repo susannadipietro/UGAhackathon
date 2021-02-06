@@ -15,6 +15,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
+import java.util.ArrayList;
 
 /**
  * Application subclass that will display COVID 19 information,
@@ -103,17 +104,104 @@ public class CovidApp extends Application {
 
         Group display = new Group();
 
-        Rectangle background = new Rectangle(400, 500);
+        Rectangle background = new Rectangle(350, 250);
         background.setFill(Color.WHITE);
 
-        CheckBox breathing = new CheckBox("Are you having difficulty breathing?");
+        Text instructions = new Text("Please indicate any symptoms you are experiencing:");
+        instructions.setFill(Color.MIDNIGHTBLUE);
 
-        display.getChildren().addAll(background, breathing);
+        //setting up check boxes and list to contain them all
+        ArrayList<CheckBox> emergencies = new ArrayList<>();
 
-        Scene emer = new Scene (display, 400, 500);
+        CheckBox breathing = new CheckBox("Difficulty Breathing");
+        emergencies.add(breathing);
+        CheckBox pain = new CheckBox("Persistent Pain or Pressure in your Chest");
+        emergencies.add(pain);
+        CheckBox confusion = new CheckBox("New Confusion");
+        emergencies.add(confusion);
+        CheckBox wake = new CheckBox("Inability to Wake/Stay Awake");
+        emergencies.add(wake);
+        CheckBox blue = new CheckBox("Bluish Lips or Face");
+        emergencies.add(blue);
+
+        Button next = nextButton(emergencies);
+
+        //adding bacjground for check boxes
+        Group rows = checkBackground();
+
+        //adding everything to the group
+        display.getChildren().addAll(background, rows, instructions, breathing, pain, confusion, wake, blue, next);
+
+        next.setLayoutY(260);
+        next.setLayoutX(135);
+        next.setPrefWidth(80);
+
+        rows.setLayoutY(70);
+        rows.setLayoutX(35);
+
+        int spacing = 75;
+
+        for (int i = 0; i < emergencies.size(); i++) {
+            emergencies.get(i).setLayoutX(40);
+            emergencies.get(i).setLayoutY(spacing);
+            spacing += 30;
+        }
+
+        instructions.setLayoutX(25);
+        instructions.setLayoutY(40);
+
+        Scene emer = new Scene (display, 350, 300);
 
         return emer;
     } //emergency
+
+    private Group checkBackground() {
+
+        Group bg = new Group();
+
+        int spacing = 0;
+
+        for (int i = 0; i < 5; i++) {
+            Rectangle behind = new Rectangle(280, 30);
+            if (i % 2 == 0) {
+                behind.setFill(Color.LIGHTSTEELBLUE);
+            } else {
+                behind.setFill(Color.LIGHTGREY);
+            }
+
+            bg.getChildren().add(behind);
+            behind.setLayoutY(spacing);
+            spacing += 30;
+
+        }
+
+        return bg;
+    } //checkBackground
+
+    private Button nextButton(ArrayList<CheckBox> symptoms) {
+        Button next = new Button ("Next Page");
+
+        EventHandler<ActionEvent> checkResults = (e) -> {
+            for (int i = 0; i < symptoms.size(); i++) {
+                if (symptoms.get(i).isSelected()) {
+                    overall = issues.EMER;
+                }
+            }
+
+            if (overall == issues.EMER) {
+                System.out.println("yikes srry");
+
+            }
+
+        };
+
+        next.setOnAction(checkResults);
+
+        return next;
+        //swap scene
+    } //nextButton
+
+
 
 
 
