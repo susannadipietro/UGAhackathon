@@ -173,8 +173,12 @@ public class CovidApp extends Application {
         return emer;
     } //emergency
 
+    /**
+     * This method will create and return a scene asking users to identify their COVID exposures.
+     * @param stage the stage to display the next Scene on
+     * @return the Scene containing the checkboxes and information about COVID exposure.
+     */
     private Scene exposure (Stage stage) {
-        System.out.println("exposure made");
 
         Group display = new Group();
 
@@ -194,6 +198,7 @@ public class CovidApp extends Application {
         viewOps.setFitWidth(350);
         viewOps.setPreserveRatio(true);
 
+        //Setting up check boxes and list
         ArrayList<CheckBox> exposures = new ArrayList<CheckBox>();
 
         CheckBox asymp = new CheckBox();
@@ -202,10 +207,14 @@ public class CovidApp extends Application {
         exposures.add(symp);
         exposures.add(asymp);
 
+        //setting up next button
         Button next = nextButton(exposures, issues.EXPO, stage, symptoms(stage));
+
+        //setting up background
         Rectangle bg = new Rectangle(350, 300);
         bg.setFill(Color.WHITE);
 
+        //adding to and formatting within group
         display.getChildren().addAll(bg, viewGuide, viewOps, intro, symp, asymp, next);
 
         intro.setLayoutY(20);
@@ -225,19 +234,27 @@ public class CovidApp extends Application {
         next.setLayoutX(135);
         next.setPrefWidth(80);
 
+        //creating and returning the Scene
         Scene expo = new Scene (display, 350, 300);
 
         return expo;
     } //exposure
 
+     /**
+     * This method will create and return a scene asking users to identify their COVID symptoms.
+     * @param stage the stage to display the next Scene on
+     * @return the Scene containing the checkboxes and information about COVID symptoms.
+     */
     private Scene symptoms(Stage stage) {
-        System.out.println("symptoms made");
 
+        //creating the group
         Group display = new Group();
 
+        //creating the backgrounf
         Rectangle background = new Rectangle(350, 250);
         background.setFill(Color.WHITE);
 
+        //creating the instruction text
         Text instructions = new Text("One last step!\nPlease mark  any other symptoms you currently have:");
         instructions.setFill(Color.MIDNIGHTBLUE);
         instructions.setTextAlignment(TextAlignment.CENTER);
@@ -258,17 +275,18 @@ public class CovidApp extends Application {
         CheckBox gi = new CheckBox("Nausea, vomiting, or diarrhea");
         symptoms.add(gi);
 
+        //creating the button to display results
         Button next = resultButton(symptoms, issues.SYMPT, stage, results(stage));
 
         //adding background for check boxes
         Group rows = checkBackground(6);
 
-        //adding everything to the group
+        //adding everything to the group, formatting within
         display.getChildren().addAll(background, rows, instructions, fever, resp, body, loss, cold, gi, next);
 
         next.setLayoutY(260);
-        next.setLayoutX(135);
-        next.setPrefWidth(80);
+        next.setLayoutX(115);
+        next.setPrefWidth(120);
 
         rows.setLayoutY(60);
         rows.setLayoutX(35);
@@ -284,25 +302,27 @@ public class CovidApp extends Application {
         instructions.setLayoutX(35);
         instructions.setLayoutY(20);
 
+        //creating and returning the scene
         Scene sympt = new Scene (display, 350, 300);
 
         return sympt;
     } //symptoms
 
-
+    /**
+     * This method will create and return a scene displaying the results from their risk factors.
+     * @param stage the stage to display the Scene on
+     * @return the Scene containing the results.
+     */
     private Scene results(Stage stage) {
-        System.out.println("results made");
 
+        //creating a new group
         Group display = new Group();
 
-        //Image image;
-
-        System.out.println("overall: " + overall);
-
-        //ImageView view = new ImageView(image);
+        //formatting the image view to hold the results
         showResult.setFitWidth(350);
         showResult.setPreserveRatio(true);
 
+        //creating and returning the scene
         display.getChildren().add(showResult);
 
         Scene result = new Scene(display, 350, 500);
@@ -310,12 +330,18 @@ public class CovidApp extends Application {
     }
 
 
+    /**
+     * This method will return the background for a list of checkboxes.
+     * @param size the number of rows to create a backhround for.
+     * @returns a group containing one rectangle per row, specified by size.
+     */
     private Group checkBackground(int size) {
 
         Group bg = new Group();
 
-        int spacing = 0;
+        int spacing = 0; //starting from the top
 
+        //loop will create a rectangle and place it within the group
         for (int i = 0; i < size; i++) {
             Rectangle behind = new Rectangle(280, 30);
             if (i % 2 == 0) {
@@ -333,9 +359,19 @@ public class CovidApp extends Application {
         return bg;
     } //checkBackground
 
+    /**
+     * This method will create a Button that will switch the scene to the results page and update the image.
+     * Additionally, this button will check whether the user indicated symptoms and update results accordingly.
+     * @param symptoms, an array list of check boxes indicating user input
+     * @param categoyr, the issue from the enum, based on which questionnaire the user is on.
+     * @param stage the Stage to place the next Scene on
+     * @param nextScene the next scene to display.
+     * @return a button that will display results when clicked
+     */
     private Button resultButton(ArrayList<CheckBox> symptoms, issues category, Stage stage, Scene nextScene) {
         Button next = new Button ("Show Results!");
 
+        //event handler for clicking
         EventHandler<ActionEvent> checkResults = (e) -> {
             for (int i = 0; i < symptoms.size(); i++) {
                 if (symptoms.get(i).isSelected()) {
@@ -355,11 +391,12 @@ public class CovidApp extends Application {
 
             }
 
+            //the new image to place into the image viewer
             Image altImage;
 
+            //a switch statement that will display the correct result based on the user's input
             switch(overall) {
             case EMER:
-               System.out.println("emergency");
                altImage = new Image("file:resources/emergency.png");
                showResult.setImage(altImage);
                break;
@@ -372,32 +409,41 @@ public class CovidApp extends Application {
                 showResult.setImage(altImage);
                 break;
             case BOTH:
-                System.out.println("both switch");
                 altImage = new Image("file:resources/both.png");
                 showResult.setImage(altImage);
                 break;
              default:
-                System.out.println("default");
                 altImage = new Image("file:resources/fine.png");
                 showResult.setImage(altImage);
                 break;
             }//switch
 
-
-            System.out.println("categor: " + overall);
-
+            //updating the scene
             stage.setScene(nextScene);
             stage.sizeToScene();
         };
 
+        //finalizing and returning the button
         next.setOnAction(checkResults);
 
         return next;
     }
 
+
+    /**
+     * This method will create a Button that will switch the scene to the next page.
+     * Additionally, this button will check whether the user indicated symptoms and update results accordingly.
+     * @param symptoms, an array list of check boxes indicating user input
+     * @param categoyr, the issue from the enum, based on which questionnaire the user is on.
+     * @param stage the Stage to place the next Scene on
+     * @param nextScene the next scene to display.
+     * @return a button that will switch to the next scene  when clicked
+     */
     private Button nextButton(ArrayList<CheckBox> symptoms, issues category, Stage stage, Scene nextScene) {
+
         Button next = new Button ("Next Page");
 
+        //event handler for button clicking
         EventHandler<ActionEvent> checkResults = (e) -> {
             for (int i = 0; i < symptoms.size(); i++) {
                 if (symptoms.get(i).isSelected()) {
@@ -416,21 +462,14 @@ public class CovidApp extends Application {
                 }
             }
 
-            System.out.println("categor: " + overall);
-
             stage.setScene(nextScene);
             stage.sizeToScene();
         };
 
+        //finalizing and returning the button
         next.setOnAction(checkResults);
 
         return next;
     } //nextButton
-
-
-
-
-
-
 
 } //CovidApp
